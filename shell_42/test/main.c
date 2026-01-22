@@ -121,7 +121,6 @@ char *find_type(char *str, struct data *data) // cherche les type
 	int i;
 
 	i = 0;
-	printf("cmp = %d\n", ft_strncmp(str, "echo", 5));
 	type = malloc(sizeof(char) * 10);
 	if (!type)
 		return (NULL);
@@ -157,7 +156,7 @@ char *find_type(char *str, struct data *data) // cherche les type
 	}
 	else if (check_acces(str, data) == 1)
 	{
-		type = "commade";
+		type = "commande";
 		return (type);
 	}
 	else
@@ -168,6 +167,21 @@ char *find_type(char *str, struct data *data) // cherche les type
 	return (NULL);
 }
 
+void destroy_tokens(struct token* tokens)
+{
+	struct token *current;
+	struct token *temp;
+
+	current = tokens;
+	while (current != NULL)
+	{
+		temp = current->next;
+		free(current->value);
+		free(current->type);
+		free(current);
+		current = temp;
+	}
+}
 
 int free_all(char *line, struct data *data, struct token *tokens) // free
 {
@@ -213,10 +227,10 @@ int main(int ac, char **av, char **env)
 	cpy_env_data(env, data);
 	while (1)
 	{
+		i = 0; //re intitailiser a 0
 		line = readline("minishell$ ");
-        if (!line)   // Ctrl-D
-            break;
-
+		if (!line)   // Ctrl-D
+			break;
 		data->result_split = ft_split(line, ' ');
 		while (data->result_split[i])
 		{
@@ -224,4 +238,6 @@ int main(int ac, char **av, char **env)
 			i++;
 		}
 	}
+	free_all(line, data, tokens);
+	return (0);
 }
