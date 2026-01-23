@@ -45,7 +45,7 @@ struct token *new_token(struct token* tokens, char *value, char* type) //cree le
     return(tokens);
 }
 
-void cpy_env_data(char **env, struct data *data)
+void cpy_env_data(char **env, struct data *data) // ok
 {
 	int i;
 	int x;
@@ -76,7 +76,7 @@ void cpy_env_data(char **env, struct data *data)
 	}
 }
 
-int check_acces(char *str, struct data *data) // verifie si la commande existe ou non
+int check_acces(char *str, struct data *data) //ok
 {
 	int i;
 	char *path;
@@ -115,7 +115,7 @@ int check_acces(char *str, struct data *data) // verifie si la commande existe o
 	return (0);
 }
 
-char *find_type(char *str, struct data *data) // cherche les type
+char *find_type(char *str, struct data *data) //ok
 {
 	char *type;
 	int i;
@@ -164,7 +164,7 @@ char *find_type(char *str, struct data *data) // cherche les type
 	return (NULL);
 }
 
-void destroy_tokens(struct token* tokens)
+void destroy_tokens(struct token* tokens) // ok
 {
 	struct token *current;
 	struct token *temp;
@@ -180,7 +180,7 @@ void destroy_tokens(struct token* tokens)
 	}
 }
 
-void free_all(char *line, struct data *data, struct token *tokens) // free
+void free_all(char *line, struct data *data, struct token *tokens) // OK
 {
 	int i;
 
@@ -207,7 +207,7 @@ void free_all(char *line, struct data *data, struct token *tokens) // free
 	destroy_tokens(tokens);
 }
 
-int main(int ac, char **av, char **env)
+int main(int ac, char **av, char **env) //OK
 {
 	struct data *data;
 	struct token *tokens;

@@ -1,8 +1,11 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
-#include <stdlib.h>
 #include "../libft/libft.h"
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 struct token
 {
@@ -11,8 +14,8 @@ struct token
     struct token *next; // pointe vers le prochain token (termine par NULL)
 };
 
-struct token *new_token(struct token* tokens, char *value, char* type); //crée un nouveau token
-void free_token(struct token* tokens); // detruit un token
+// void free_token(struct token* tokens); // detruit un token
 void destroy_tokens(struct token* tokens); // detruit tout les token
+struct token *new_token(struct token* tokens, char *value, char* type); //cree le nouveau token
 
 #endif
