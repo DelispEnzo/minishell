@@ -1,9 +1,10 @@
 NAME    = Minishell
 
 CC      = cc
-CFLAGS  = -Wall -Wextra -Werror -g
+CFLAGS  = -Wall -Wextra -Werror -g -fsanitize=address
+LDFLAGS = -fsanitize=address
 
-SRCS    = main.c lexer/lexer.c lexer/split_mod.c tokens/token.c
+SRCS    = main.c lexer/lexer.c lexer/split_mod.c tokens/token.c  signal/signal.c
 OBJS    = $(SRCS:.c=.o)
 
 LIBFT   = libft/libft.a

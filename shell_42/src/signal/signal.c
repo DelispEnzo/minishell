@@ -12,6 +12,8 @@
 
 #include "signal.h"
 
+int g_status = 0;
+
 void handle_sigint(int sig)
 {
     (void)sig;

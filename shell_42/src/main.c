@@ -1,31 +1,52 @@
 #include "lexer/lexer.h"
 #include "signal/signal.h"
 
-void free_all(char *line, struct data *data, struct token *tokens) // OK
+void free_all(char *line, struct data *data, struct token *tokens, char **arg) // OK
 {
 	int i;
 
 	i = 0;
 	free(line);
-	while (data->env[i])
+	if (data->env)
 	{
-		free(data->env[i]);
-		i++;
+		while (data->env[i])
+		{
+			free(data->env[i]);
+			i++;
+		}
+		free(data->env);
 	}
 	i = 0;
-	while (data->path_split)
-	{
-		free(data->path_split[i]);
-		i++;
+	if (data->path_split) {
+		while (data->path_split[i])
+		{
+			free(data->path_split[i]);
+			i++;
+		}
+		free(data->path_split);
 	}
 	i = 0;
-	while (data->result_split)
+	if (data->result_split)
 	{
-		free(data->result_split[i]);
-		i++;
+		while (data->result_split[i])
+		{
+			free(data->result_split[i]);
+			i++;
+		}
+		free(data->result_split);
+	}
+	i = 0;
+	if (arg)
+	{
+		while (arg[i])
+		{
+			free(arg[i]);
+			i++;
+		}
 	}
 
 	destroy_tokens(tokens);
+	free(data);
 }
 
 int main(int ac, char **av, char **env)
@@ -38,33 +59,27 @@ int main(int ac, char **av, char **env)
 	char *tmp;
 
 	(void)av;
-	arg = malloc(sizeof(char *) * ac);
-	if (!arg)
-		return(0);
-	arg[ac] = NULL;
+	(void)ac;
+	arg = NULL;
+	// malloc tableau arg**
 	i = 0;
-	tokens = malloc(sizeof(struct token));
-	if (!tokens)
-		return (0);
+	tokens = NULL;
 	data = malloc(sizeof(struct data));
 	if (!data)
 		return (0);
 	data->path_split = NULL;
+	data->result_split = NULL;
 	cpy_env_data(env, data);
-	// signal(SIGINT, handle_sigint); signal 
-    // signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, handle_sigint);
+    signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		i = 0; //re intitailiser a 0
 		line = readline("minishell$ ");
 		if (!line)   // Ctrl-D
 			break;
-		if (add_history(line) == 1)
-		{
-			free_all(line, data, tokens);
-			return (0);
-		}
-		data->result_split = ft_split(line, ' ');
+		add_history(line);
+		data->result_split = ft_split_mod(line, ' ');
 		while (data->result_split[i])
 		{
 			arg[i] = find_type(data->result_split[i], data);
@@ -98,7 +113,8 @@ int main(int ac, char **av, char **env)
 			tokens = new_token(tokens, data->result_split[i], arg[i]);
 			i++;
 		}
+		free(line);
 	}
-	free_all(line, data, tokens);
+	free_all(line, data, tokens, arg);
 	return (0);
 }

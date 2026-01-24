@@ -24,7 +24,7 @@ struct data
 
 char *find_type(char *str, struct data *data);
 void cpy_env_data(char **env, struct data *data);
-char	**ft_split(char const *s, char c);
+char	**ft_split_mod(char const *s, char c);
 // void fill_tokens(struct data *data, struct token *tokens, char **arg);
 
 #endif

@@ -133,7 +133,7 @@ static void	set_mem(char **tab, char const *s, char c)
 	tab[i] = 0;
 }
 
-char	**ft_split(char const *s, char c)
+char	**ft_split_mod(char const *s, char c)
 {
 	size_t	words;
 	char	**tab;
@@ -143,6 +143,7 @@ char	**ft_split(char const *s, char c)
 	if (!tab)
 		return (NULL);
 	set_mem(tab, s, c);
+	tab[words] = NULL;
 	return (tab);
 }
 

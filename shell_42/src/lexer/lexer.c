@@ -24,9 +24,9 @@ void cpy_env_data(char **env, struct data *data) // ok
 	x = 0;
 	while (env[size])
 		size++;
-	data->env = malloc(sizeof(char *) * size);
+	data->env = malloc(sizeof(char *) * (size + 1));
 	if (!data->env)
-		return ;
+		return;
 	data->env[size] = NULL;
 	while (env[i])
 	{

@@ -10,6 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef SIGNAL_H
+#define SIGNAL_H
+
 #include <signal.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -20,7 +23,9 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-int g_status = 0;
+extern int g_status;
 
 
 void handle_sigint(int sig);
+
+#endif // SIGNAL_H
