@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   signal.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/23 17:59:49 by enzo              #+#    #+#             */
-/*   Updated: 2026/01/23 18:19:31 by enzo             ###   ########.fr       */
+/*   Updated: 2026/01/26 13:23:16 by elquesne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SIGNAL_H
 #define SIGNAL_H
 
+#include "../tokens/token.h"
+#include "../lexer/lexer.h"
 #include <signal.h>
 #include <unistd.h>
 #include <stdio.h>

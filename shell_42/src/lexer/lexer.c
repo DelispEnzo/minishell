@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/23 16:21:57 by enzo              #+#    #+#             */
-/*   Updated: 2026/01/23 17:05:35 by enzo             ###   ########.fr       */
+/*   Updated: 2026/01/26 13:24:00 by elquesne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
+
+
 
 void cpy_env_data(char **env, struct data *data) // ok
 {
@@ -24,6 +26,7 @@ void cpy_env_data(char **env, struct data *data) // ok
 	x = 0;
 	while (env[size])
 		size++;
+	printf("%d\n", size);
 	data->env = malloc(sizeof(char *) * (size + 1));
 	if (!data->env)
 		return;
@@ -31,14 +34,18 @@ void cpy_env_data(char **env, struct data *data) // ok
 	while (env[i])
 	{
 		x = 0;
-		data->env[i] = malloc(sizeof(char) * ft_strlen(env[i]));
+		data->env[i] = malloc(sizeof(char) * (ft_strlen(env[i]) + 1));
 		if (!data->env[i])
-			printf("bien tout free"); // a ne pas oublie de modifier
+		{
+			free_tab(data->env);
+			return;
+		}
 		while (env[i][x])
 		{
 			data->env[i][x] = env[i][x];
 			x++;
 		}
+		data->env[i][x] = '\0';
 		i++;
 	}
 }
@@ -51,7 +58,7 @@ int check_acces(char *str, struct data *data) // verifie si la commande existe o
 	char	*valid_path;
 
 	i = 0;
-	while (data->env[i])
+	while (data->env[i] != NULL)
 	{
 		if (ft_strncmp(data->env[i], "PATH=", 5) == 0)
 		{
@@ -61,6 +68,8 @@ int check_acces(char *str, struct data *data) // verifie si la commande existe o
 		}
 		i++;
 	}
+	if(data->path_split)
+		free_tab (data->path_split);
 	data->path_split = ft_split(path, ':');
 	i = 0;
 	av2 = ft_strjoin("/", str);
@@ -70,14 +79,15 @@ int check_acces(char *str, struct data *data) // verifie si la commande existe o
 		valid_path = ft_strjoin(data->path_split[i], av2);
 		if (access(valid_path, X_OK) == 0)
 		{
+			free(path);
 			free(av2);
 			free(valid_path);
 			return (1);
-			break ;
 		}
 		i++;
 		free(valid_path);
 	}
+	free(path);
 	free(av2);
 	return (0);
 }

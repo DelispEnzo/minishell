@@ -1,54 +1,6 @@
 #include "lexer/lexer.h"
 #include "signal/signal.h"
 
-void free_all(char *line, struct data *data, struct token *tokens, char **arg) // OK
-{
-	int i;
-
-	i = 0;
-	free(line);
-	if (data->env)
-	{
-		while (data->env[i])
-		{
-			free(data->env[i]);
-			i++;
-		}
-		free(data->env);
-	}
-	i = 0;
-	if (data->path_split) {
-		while (data->path_split[i])
-		{
-			free(data->path_split[i]);
-			i++;
-		}
-		free(data->path_split);
-	}
-	i = 0;
-	if (data->result_split)
-	{
-		while (data->result_split[i])
-		{
-			free(data->result_split[i]);
-			i++;
-		}
-		free(data->result_split);
-	}
-	i = 0;
-	if (arg)
-	{
-		while (arg[i])
-		{
-			free(arg[i]);
-			i++;
-		}
-	}
-
-	destroy_tokens(tokens);
-	free(data);
-}
-
 int main(int ac, char **av, char **env)
 {
 	struct data *data;
@@ -60,8 +12,8 @@ int main(int ac, char **av, char **env)
 
 	(void)av;
 	(void)ac;
+	tmp = NULL;
 	arg = NULL;
-	// malloc tableau arg**
 	i = 0;
 	tokens = NULL;
 	data = malloc(sizeof(struct data));
@@ -79,7 +31,15 @@ int main(int ac, char **av, char **env)
 		if (!line)   // Ctrl-D
 			break;
 		add_history(line);
+		if(data->result_split)
+			free_tab(data->result_split);
 		data->result_split = ft_split_mod(line, ' ');
+		if(arg)
+			free_tab(arg);
+		arg = malloc(sizeof(char*) * (ft_tab_len(data->result_split) + 1));  //Malloc arg a la taille du res de split
+		if(!arg)
+			return(free_all(line, data, tokens, arg), 1);
+		arg[ft_tab_len(data->result_split)] = NULL;
 		while (data->result_split[i])
 		{
 			arg[i] = find_type(data->result_split[i], data);
@@ -88,16 +48,21 @@ int main(int ac, char **av, char **env)
 				i++;
 				while (data->result_split[i])
 				{
-					if (tmp)
+					if (tmp != NULL)
+					{
 						free(tmp);
+						tmp = NULL;
+					}
 					tmp = find_type(data->result_split[i], data);
 					printf("%s\n", tmp);
 					if (ft_strncmp(tmp, "pipe", 5) == 0 || ft_strncmp(tmp, "dgreat", 7) == 0 || ft_strncmp(tmp, "great", 6) == 0 || ft_strncmp(tmp, "less", 5) == 0 || ft_strncmp(tmp, "dless", 5) == 0)
 					{
-						printf("OK");
 						arg[i] = find_type(data->result_split[i], data);
-						if (tmp)
+						if (tmp != NULL)
+						{
 							free(tmp);
+							tmp = NULL;
+						}
 						break;
 					}
 					arg[i] = ft_strdup("arg");

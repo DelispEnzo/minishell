@@ -1,7 +1,9 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
+#include "../utiles/utiles.h"
 #include "../libft/libft.h"
+#include "../lexer/lexer.h"
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
