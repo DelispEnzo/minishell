@@ -10,5 +10,6 @@
 
 void ft_pwd(void);
 int ft_exit(struct token *tokens);
+int ft_export(struct token *tk, struct data *dt);
 
 #endif

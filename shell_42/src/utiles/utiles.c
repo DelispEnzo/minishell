@@ -6,19 +6,19 @@
 /*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/26 13:22:04 by elquesne          #+#    #+#             */
-/*   Updated: 2026/01/26 13:24:28 by elquesne         ###   ########.fr       */
+/*   Updated: 2026/01/27 18:18:52 by elquesne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"utiles.h"
-
-
 
 void free_tab(char** tab)
 {
 	int i;
 
 	i = 0;
+	if (!tab)
+		return;
 	while (tab[i])
 	{
 		free(tab[i]);
@@ -33,6 +33,8 @@ int ft_tab_len(char** tab) // Donne la taillle d'un tableau de tableau
 	int i;
 
 	i = 0;
+	if (!tab)
+		return (1);
 	while (tab[i])
 	{
 		i++;

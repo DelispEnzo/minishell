@@ -6,19 +6,23 @@
 /*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 16:58:14 by enzo              #+#    #+#             */
-/*   Updated: 2026/01/26 13:23:40 by elquesne         ###   ########.fr       */
+/*   Updated: 2026/01/27 17:50:00 by elquesne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LEXER_H
 #define LEXER_H
 
+#include "../utiles/utiles.h"
+#include "../libft/libft.h"
 #include "../tokens/token.h"
 
 struct data
 {
+    // int code_erreur;
     char **result_split; //resultat de slpit de readline
     char **env; //copie de l'environement
+    char **export_tab; // env vide pour export
     char **path_split; //chemin du path
 };
 

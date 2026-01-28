@@ -49,8 +49,6 @@ struct token *new_token(struct token* tokens, char *value, char* type) //cree le
     }
     next->next = NULL;
     last_element = get_last_token(tokens);
-	printf("type : %s\n", next->type);
-	printf("token : %s\n", next->value);
     if(!last_element)
         return(next);
     last_element->next = next;

@@ -6,7 +6,7 @@
 /*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/23 17:59:49 by enzo              #+#    #+#             */
-/*   Updated: 2026/01/26 13:23:16 by elquesne         ###   ########.fr       */
+/*   Updated: 2026/01/26 14:37:51 by elquesne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@
 #include <readline/history.h>
 
 extern int g_status;
-
 
 void handle_sigint(int sig);
 

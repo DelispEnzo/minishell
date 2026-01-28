@@ -13,6 +13,7 @@ int ft_exit(struct token *tokens)
 {
     struct token *element;
     unsigned int exit_code;
+    struct token *tmp;
 
 
     element = tokens;
@@ -39,14 +40,14 @@ int ft_exit(struct token *tokens)
                 exit_code = 2;
                 printf("exit\n");
                 printf("exit: %s: numeric argument required \n", element->value);
-                return(exit_code)
+                return(exit_code);
             }
             else
             {
                 exit_code = 1;
                 printf("exit\n");
                 printf(" exit: too many arguments \n");
-                return(exit_code) 
+                return(exit_code) ;
             }
         }
         else // un seul arg
@@ -64,7 +65,7 @@ int ft_exit(struct token *tokens)
                 exit_code = 2;
                 printf("exit\n");
                 printf("exit: %s: numeric argument required \n", element->value);
-                return(exit_code)
+                return(exit_code);
             }
             else
             {

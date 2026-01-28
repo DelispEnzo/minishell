@@ -6,10 +6,7 @@ int ft_pwd(void) // Donne le chemin d'acess au dossier acctuel
 
     pwd = getcwd(NULL, 0); // getcwd fait tout tout seul et revoie NULL si il fail
     if(pwd == NULL)
-    {
-        printf("no such file or directory");
-        return(1);
-    }
+        return(printf("no such file or directory"), 1);
     else
         printf("%s\n", pwd);
     free(pwd);

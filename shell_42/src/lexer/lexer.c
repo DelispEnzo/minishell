@@ -6,7 +6,7 @@
 /*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/23 16:21:57 by enzo              #+#    #+#             */
-/*   Updated: 2026/01/26 13:24:00 by elquesne         ###   ########.fr       */
+/*   Updated: 2026/01/28 17:03:17 by elquesne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ void cpy_env_data(char **env, struct data *data) // ok
 	x = 0;
 	while (env[size])
 		size++;
-	printf("%d\n", size);
 	data->env = malloc(sizeof(char *) * (size + 1));
 	if (!data->env)
 		return;
@@ -109,7 +108,7 @@ char *find_type(char *str, struct data *data) // cherche les type
 	}
 	else if (ft_strncmp(str, ">>", 3) == 0)
 	{
-		type = ft_strdup("dgrat");
+		type = ft_strdup("dgreat");
 		return(type);
 	}
 	else if (ft_strncmp(str, ">", 2) == 0)
