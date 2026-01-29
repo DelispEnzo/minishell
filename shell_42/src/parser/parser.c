@@ -3,141 +3,174 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/26 13:27:51 by elquesne          #+#    #+#             */
-/*   Updated: 2026/01/28 17:38:26 by elquesne         ###   ########.fr       */
+/*   Created: 2026/01/28 23:07:12 by enzo              #+#    #+#             */
+/*   Updated: 2026/01/29 00:58:45 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"parser.h"
+#include "parser.h"
 
-void init_commande(struct commandes *commande)
+/// -------------------------------------------
+void print_commands(struct commandes *cmd)
 {
-    commande->append_mode = 0;
-    commande->heredoc_mode = 0;
-    commande->infile = NULL;
-    commande->limiter = NULL;
-    commande->next = NULL;
-    commande->outfile = NULL;
-    commande->value = NULL;
-}
-
-// void free_commandes(struct commandes *commandes)
-// {
-//     struct commandes *tmp;
-    
-    
-//     if(commandes->next != NULL)
-//     {
-//         while (commandes->next != NULL)
-//         {
-//             tmp = commandes->next;
-//             free_tab(commandes->args);
-//             free(commandes);
-//             commandes = tmp;
-//         }
-//     }
-//     else
-//     {
-//         if(commandes->args)
-//         {
-//             free_tab(commandes->args);
-//         }
-//         free(commandes);
-//     }
-// }
-
-
-
-int is_separateur(char* token_type)
-{
-	if (ft_strncmp(token_type, "dgreat", 6) == 0)
-		return (1);
-	else if (ft_strncmp(token_type, "great", 6) == 0)
-		return (1);
-	else if (ft_strncmp(token_type, "dless", 6) == 0)
-		return (1);
-	else if (ft_strncmp(token_type, "less", 5) == 0)
-		return (1);
-    else
-        return(0);
-}
-
-void fill_args(struct commandes *commandes, struct token *tokens, int index)
-{
-    struct token *token;
-    struct commandes *commande;
     int i;
-    
-    token = tokens;
-    commande = commandes;
-    i = 0;
-    while (i <= index)
+    int count = 1;
+
+    if (!cmd)
     {
-        while (token != NULL && ft_strcmp(token->type, "pipe") != 0)
-            token = token->next;
-        i++;
+        printf("DEBUG: La liste de commandes est vide (NULL).\n");
+        return;
     }
-    if(token->next != NULL)
-        token = token->next;
-    i = 0;
-    while (commande->argv[i])
+
+    while (cmd)
     {
-        if(is_separateur(token->type) == 1)
+        printf("\n========== COMMANDE %d n", count++);
+
+        // 1. Infos de base
+        printf("Value (path): %s\n", cmd->value ? cmd->value : "(null)");
+
+        // 2. Affichage de argv (tableau de chaînes)
+        printf("Argv:\n");
+        if (cmd->argv)
         {
-            if(ft_strcmp(token->value, "<<") != 0)
+            i = 0;
+            while (cmd->argv[i])
             {
-                commande->heredoc_mode = 1;
-                commande->limiter = token->next->value;
-                if(commande->limiter == NULL || is_separateur(commande->limiter) == 1 || ft_strcmp(commande->limiter, "|") == 0)
-                {
-                    printf("minishell: syntax error near unexpected token `%s'", commande->limiter);
-                    exit(2);
-                }
+                printf("  [%d] : %s\n", i, cmd->argv[i]);
+                i++;
             }
-            else if(ft_strcmp(token->value, "<") != 0)
-                commande->infile = token->next->value;
         }
         else
-            commande->argv[i] = ft_strdup(token->value);
-        token = token->next;
-        if(token != NULL && ft_strcmp(token->type, "pipe") == 0)
-            break;
-        i++;
+        {
+            printf("  (null)\n");
+        }
+
+        // 3. Redirections
+        printf("--- Redirections ---\n");
+        printf("Infile       : %s\n", cmd->infile ? cmd->infile : "STDIN (Clavier)");
+        printf("Heredoc Mode : %s\n", cmd->heredoc_mode ? "OUI (<<)" : "NON");
+        printf("Limiter      : %s\n", cmd->limiter ? cmd->limiter : "(null)");
+        printf("Outfile      : %s\n", cmd->outfile ? cmd->outfile : "STDOUT (Ecran)");
+        printf("Append Mode  : %s\n", cmd->append_mode ? "OUI (>>)" : "NON (>)");
+
+        // Passage au maillon suivant
+        cmd = cmd->next;
     }
-    
+    printf("\n=================================\n");
+}
+//--------------------------------------------------------------
+
+int size_argv(struct token *token)
+{
+	int i;
+
+	i = 0;
+	while (token != NULL && strncmp(token->type, "pipe", 5) != 0)
+	{
+		token = token->next;
+		i++;
+	}
+	return (i);
 }
 
-void parsin_general(struct data *data, struct token *tokens)
+struct token *avance_token(struct token *token, int i)
 {
-    struct token *token;
-    struct commandes* commandes;
-    int i;
-    int y;
-    int x;
-    
-    x = 0;
-    y = 0;
-    i = 0;
-    while(token != NULL)
-    {
-        x = 0;
-        while (token != NULL && ft_strcmp(token->type, "pipe") != 0)
+	int x;
+	struct token *tmp;
+	tmp = token;
+	x = 0;
+	while (x < i && tmp != NULL)
+	{
+		tmp = tmp->next;
+		x++;
+	}
+	return (tmp);
+}
+
+void cpy_commande(struct token *token, struct commandes *cmd)
+{
+	int i;
+
+	i = 0;
+	struct token *tmp;
+
+	tmp = token;
+	while (tmp != NULL && strncmp(tmp->type, "pipe", 5) != 0)
+	{
+		if (strncmp(tmp->value, "<", 1) == 0 && tmp->value[1] == '\0' && tmp->next)
         {
-            token = token->next;
-            x++;
+            cmd->infile = ft_strdup(tmp->next->value);
+            cmd->heredoc_mode = 0;
+            tmp = tmp->next; // On saute le fichier
         }
-        commandes = malloc(sizeof(struct commandes));
-        if(!commandes)
-            return(free_commandes(commandes));.
-        init_commande(commandes);
-        commandes->argv = malloc(sizeof(char *) * (x + 1));
-        if(!commandes)
-            return(free_commandes(commandes));
-        commandes->argv[x] = NULL;
-        fill_args(commandes , tokens, y);
-        y++;
-        // token = token->next;
-    }
+        // 2. Gestion HEREDOC '<<'
+        // On compare value avec "<<" (taille 2)
+        else if (strncmp(tmp->value, "<<", 2) == 0 && tmp->next)
+        {
+            cmd->limiter = ft_strdup(tmp->next->value);
+            cmd->heredoc_mode = 1;
+            tmp = tmp->next; // On saute le limiteur
+        }
+        // 3. Gestion APPEND '>>' (Ajout)
+        // ATTENTION : Il faut tester '>>' AVANT '>' sinon '>' matchera le début de '>>'
+        else if (strncmp(tmp->value, ">>", 2) == 0 && tmp->next)
+        {
+            cmd->outfile = ft_strdup(tmp->next->value);
+            cmd->append_mode = 1;
+            tmp = tmp->next; // On saute le fichier
+        }
+        // 4. Gestion TRUNCATE '>' (Écrasement)
+        else if (strncmp(tmp->value, ">", 1) == 0 && tmp->value[1] == '\0' && tmp->next)
+        {
+            cmd->outfile = ft_strdup(tmp->next->value);
+            cmd->append_mode = 0;
+            tmp = tmp->next; // On saute le fichier
+        }
+		else
+		{
+			if (i == 0)
+				cmd->value = strdup(tmp->value);
+			cmd->argv[i] = strdup(tmp->value);
+			i++;
+		}
+		tmp = tmp->next;
+	}
+	cmd->argv[i] = NULL;
+}
+
+int parser(struct token *token, struct data *data)
+{
+	struct commandes *commande;
+	struct token *tmp;
+	struct commandes *head;
+
+	head = NULL;
+	commande = ft_calloc(1, sizeof(*commande));
+	if (!commande)
+		return (0);
+	head = commande;
+	while (token != NULL)
+	{
+		commande->argv = malloc(sizeof(char *) * (size_argv(token) + 1));
+		if (!commande->argv)
+			return (0);
+		tmp = token;
+		token = avance_token(token, size_argv(token));
+		cpy_commande(tmp, commande);
+
+		if (token != NULL && strncmp(token->type, "pipe", 5) == 0)
+		{
+			struct commandes *nouvelle;
+			nouvelle = ft_calloc(1, sizeof(struct commandes));
+			token = token->next;
+			commande->next = nouvelle;
+			commande = commande->next;
+		}
+		else
+			break;
+	}
+	exec(token, data, head);
+	return (0);
 }

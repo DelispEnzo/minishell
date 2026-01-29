@@ -1,6 +1,5 @@
 #include "exec.h"
 
-struct commande	*create_commande_list(struct token *tokens);
 
 char *check_path(char *str, struct data *data) // verifie le chemin de la commande
 {
@@ -45,29 +44,28 @@ char *check_path(char *str, struct data *data) // verifie le chemin de la comman
 	return (NULL);
 }
 
-int	execution(struct commande *cmd, struct token *tokens)
+int	execution(struct commandes *cmd, struct token *tokens)
 {
 	(void)tokens;
 	if (!cmd->value)
 		return (0);
 	if (strcmp(cmd->value, "echo") == 0)
 	{
-		echo(cmd->argv);
 		return (1);
 	}
 	return (0);
 }
 
-int	parser(struct token *tokens, struct data *data)
+int	exec(struct token *tokens, struct data *data, struct commandes *cmd)
 {
-	struct commande	*commande;
+	struct commandes	*commande;
 	int				fd[2]; // fd[0] = clavier // fd[1] = ecran
 	int				prev;
 	pid_t			pid;
 	char			*valid_path;
 
 	prev = -1;
-	commande = create_commande_list(tokens);
+	commande = cmd;
 	while (commande)
 	{
 		if (commande->next)
@@ -117,7 +115,7 @@ int	parser(struct token *tokens, struct data *data)
 					flag = O_WRONLY | O_CREAT | O_APPEND;
 				else // >
 					flag = O_WRONLY | O_CREAT | O_TRUNC;
-				fd_out = open(commande->outfile, flag);
+				fd_out = open(commande->outfile, flag, 0644);
 				if (fd_out == -1)
 				{
 					perror(commande->outfile);
@@ -130,10 +128,17 @@ int	parser(struct token *tokens, struct data *data)
 			{
 				valid_path = check_path(commande->value, data);
 				if (valid_path == NULL)
-					return (0);
+				{
+					write(2, "minishell: command not found: ", 30);
+					write(2, commande->value, ft_strlen(commande->value));
+					write(2, "\n", 1);
+					exit(127);
+				}
 				execve(valid_path, commande->argv, data->env);
+				perror("execve");
+				exit(126);
 			}
-			exit(1);
+			exit(0);
 		}
 		else
 		{

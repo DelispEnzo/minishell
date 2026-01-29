@@ -15,7 +15,7 @@ void free_loop(struct data *data, struct token **tokens, char **arg)
     }
     if (arg)
     {
-        free(arg); 
+        free(arg);
     }
     if (*tokens)
     {
@@ -50,7 +50,7 @@ int main(int ac, char **av, char **env)
     data->result_split = NULL;
     data->env = NULL;
     cpy_env_data(env, data);
-    
+
     signal(SIGINT, handle_sigint);
     signal(SIGQUIT, SIG_IGN);
 
@@ -60,6 +60,7 @@ int main(int ac, char **av, char **env)
         if (!line) break;
         if (*line) add_history(line);
 
+        k = 0;
         data->result_split = ft_split_mod(line, ' ');
         if (data->result_split)
         {
@@ -72,14 +73,14 @@ int main(int ac, char **av, char **env)
             while (data->result_split[i])
             {
                 type = find_type(data->result_split[i], data);
-                arg[i] = type; 
-                if (ft_strcmp(type, "commande") == 0)
+                arg[i] = type;
+                if (ft_strncmp(type, "commande", 9) == 0)
                 {
                     j = i + 1;
                     while (data->result_split[j])
                     {
                         next_type = find_type(data->result_split[j], data);
-                        if (ft_strcmp(next_type, "pipe") == 0 || ft_strcmp(next_type, "great") == 0) 
+                        if (ft_strncmp(next_type, "pipe", 5) == 0 || ft_strncmp(next_type, "great", 6) == 0)
                         {
                             free(next_type);
                             break;
@@ -97,6 +98,7 @@ int main(int ac, char **av, char **env)
                 tokens = new_token(tokens, data->result_split[k], arg[k]);
                 k++;
             }
+            parser(tokens, data);
 			//////////////////////////////////////////////////////////////////////////////////////////////////////
 			// if (tokens && ft_strcmp(tokens->value, "export") == 0)
 			// {
@@ -111,6 +113,6 @@ int main(int ac, char **av, char **env)
         }
         free(line);
     }
-    free_all(NULL, data, NULL, NULL); 
+    free_all(NULL, data, NULL, NULL);
     return (0);
 }

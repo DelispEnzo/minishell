@@ -15,11 +15,18 @@ struct commandes
 	char *limiter;     // Mot de fin pour '<<' (Heredoc)
 	int  heredoc_mode; // 1 si '<<', 0 sinon
 
-	struct commande *next;
+	struct commandes *next;
 };
+
+struct token;
+struct data;
+
 #include "../built-in/built_in.h"
 #include "../utiles/utiles.h"
 #include "../tokens/token.h"
 #include "../lexer/lexer.h"
+#include "../exec/exec.h"
+
+int parser(struct token *token, struct data *data);
 
 #endif

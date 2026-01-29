@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utiles.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/26 13:22:04 by elquesne          #+#    #+#             */
-/*   Updated: 2026/01/27 18:18:52 by elquesne         ###   ########.fr       */
+/*   Updated: 2026/01/28 23:25:21 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void free_all(char *line, struct data *data, struct token *tokens, char **arg) /
 		free(data->env);
 	}
 	i = 0;
-	if (data->path_split) 
+	if (data->path_split)
 	{
 		while (data->path_split[i])
 		{
@@ -89,5 +89,5 @@ void free_all(char *line, struct data *data, struct token *tokens, char **arg) /
 	}
 	destroy_tokens(tokens);
 	free(data);
-	rl_clear_history();
+	clear_history();
 }

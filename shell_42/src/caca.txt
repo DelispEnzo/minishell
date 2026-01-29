@@ -1,0 +1,12 @@
+built-in
+caca.txt
+exec
+lexer
+libft
+main.c
+Makefile
+Minishell
+parser
+signal
+tokens
+utiles

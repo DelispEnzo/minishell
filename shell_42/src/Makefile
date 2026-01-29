@@ -1,16 +1,16 @@
 NAME    = Minishell
 
 CC      = cc
-CFLAGS  = -Wall -Wextra -Werror -g -I./libft -I./lexer -I./tokens -I./built-in -I./inc.
+CFLAGS  = -Wall -Wextra -Werror -g -I ./libft -I./lexer -I./tokens -I./built-in -I./inc.
 
-SRCS    = main.c lexer/lexer.c lexer/split_mod.c tokens/token.c  signal/signal.c utiles/utiles.c built-in/export.c exec/exec.c exec/heardoc.c parser/parser.c
+SRCS    = main.c lexer/lexer.c lexer/split_mod.c tokens/token.c  signal/signal.c utiles/utiles.c parser/parser.c exec/exec.c exec/heardoc.c
 OBJS    = $(SRCS:.c=.o)
 
 LIBFT   = libft/libft.a
 
 LIBS    = -Llibft -lft -lreadline -lncurses
 
-INCLUDES = -Ilibft 
+INCLUDES = -Ilibft
 
 all: $(NAME)
 
