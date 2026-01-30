@@ -6,7 +6,7 @@
 /*   By: edelispo <edelispo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 23:07:12 by enzo              #+#    #+#             */
-/*   Updated: 2026/01/30 20:32:03 by edelispo         ###   ########.fr       */
+/*   Updated: 2026/01/30 21:20:29 by edelispo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,6 @@ void free_commande(struct commandes *cmd)
 {
 	struct commandes *tmp;
 
-	printf("Rentre dans free_commande\n");
 	tmp = cmd;
 	while(cmd != NULL)
 	{

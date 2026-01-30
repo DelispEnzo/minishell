@@ -49,6 +49,7 @@ int main(int ac, char **av, char **env)
     data->path_split = NULL;
     data->result_split = NULL;
     data->env = NULL;
+    data->export_tab = NULL;
     cpy_env_data(env, data);
     if (!data->env)
     {
@@ -155,13 +156,25 @@ int main(int ac, char **av, char **env)
                 tokens = new_token(tokens, data->result_split[k], arg[k]);
                 k++;
             }
+            if(data->result_split)
+            {
+                free_tab(data->result_split);
+                data->result_split = NULL;
+            }
+            if(arg)
+            {
+                free_tab(arg);
+                arg = NULL;
+            }
             parser(tokens, data);
             free_loop(data, &tokens, arg);
         }
         free(line);
     }
-    if(data->export_tab)
+    if (data->export_tab)
         free_tab(data->export_tab);
+    if(data->path_split)
+        free_tab(data->path_split);
     free_tab(data->env);
     free(data);
     free(tokens);

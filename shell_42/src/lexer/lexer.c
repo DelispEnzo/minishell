@@ -6,7 +6,7 @@
 /*   By: edelispo <edelispo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/23 16:21:57 by enzo              #+#    #+#             */
-/*   Updated: 2026/01/30 17:07:34 by edelispo         ###   ########.fr       */
+/*   Updated: 2026/01/30 21:19:18 by edelispo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,10 @@ int check_acces(char *str, struct data *data) // verifie si la commande existe o
 		i++;
 	}
 	if(data->path_split)
+	{
 		free_tab (data->path_split);
+		data->path_split = NULL;
+	}
 	data->path_split = ft_split(path, ':');
 	i = 0;
 	av2 = ft_strjoin("/", str);
@@ -81,6 +84,8 @@ int check_acces(char *str, struct data *data) // verifie si la commande existe o
 			free(path);
 			free(av2);
 			free(valid_path);
+			free_tab(data->path_split);
+			data->path_split = NULL;
 			return (1);
 		}
 		i++;
@@ -88,6 +93,11 @@ int check_acces(char *str, struct data *data) // verifie si la commande existe o
 	}
 	free(path);
 	free(av2);
+	if (data->path_split)
+	{
+		free_tab(data->path_split);
+		data->path_split = NULL;
+	}
 	return (0);
 }
 

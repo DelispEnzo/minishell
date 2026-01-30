@@ -86,16 +86,21 @@ void free_machin_truc(struct token *tokens, struct data *data, struct commandes 
 {
     if (cmd)
         free_commande(cmd);
+
     if (tokens)
-	{
         destroy_tokens(tokens);
-	}
-    if (data->path_split)
-        free_tab(data->path_split);
-    if (data->env)
-        free_tab(data->env);
     if (data)
+    {
+        if (data->result_split)
+            free_tab(data->result_split);
+        if (data->path_split)
+            free_tab(data->path_split);
+        if (data->export_tab)
+            free_tab(data->export_tab);
+        if (data->env)
+            free_tab(data->env);
         free(data);
+    }
 }
 int	exec(struct token *tokens, struct data *data, struct commandes *cmd)
 {
