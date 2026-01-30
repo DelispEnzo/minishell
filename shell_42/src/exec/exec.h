@@ -20,7 +20,7 @@ struct data;
 struct commandes;
 
 // --- PROTOTYPES ---
-int execution(struct commandes *cmd, struct token *tokens);
+int	execution(struct commandes *cmd, struct token *tokens, struct data *data);
 int	exec(struct token *tokens, struct data *data, struct commandes *cmd);
 int gestion_heredoc(char *delimiteur);
 

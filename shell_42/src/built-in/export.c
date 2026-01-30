@@ -1,4 +1,7 @@
 #include"built_in.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 void write_str(char *s)
 {
@@ -15,8 +18,12 @@ void write_str(char *s)
 
 char **add_to_env_tab(char **old_tab, char *str)
 {
-    int i = 0;
+    int i;
     char **new_tab;
+    int j;
+
+    i = 0;
+    j = 0;
     if (old_tab)
     {
         while (old_tab[i])
@@ -25,7 +32,6 @@ char **add_to_env_tab(char **old_tab, char *str)
     new_tab = malloc(sizeof(char *) * (i + 2));
     if (!new_tab)
         return (old_tab);
-    int j = 0;
     while (j < i)
     {
         new_tab[j] = old_tab[j];
@@ -41,22 +47,25 @@ char **add_to_env_tab(char **old_tab, char *str)
 int ft_export(struct token *tk, struct data *dt)
 {
     struct token *tmp_tk;
+    int i;
+    int j;
 
+    i = 0;
+    j = 0;
     //verif;
     tmp_tk = tk;
-    if (tk->next != NULL && ft_strcmp(tmp_tk->type, "arg") == 0)
+    if (tk->next != NULL && ft_strncmp(tmp_tk->type, "arg", 4) == 0)
         tmp_tk = tk->next;
     if (dt->env && dt->env[0])
     {
         //printf("ici %s\n", tmp_tk->next->type);
-        if (ft_strcmp(tk->value, "export=") == 0)
+        if (ft_strncmp(tk->value, "export=", 8) == 0)
         {
             return 1;
         }
-        if (ft_strcmp(tk->value, "export") == 0 && (tk->next == NULL || ft_strcmp(tk->next->type, "arg") != 0)) // affiche toute les variables d'environnement ajoute
+        if (ft_strncmp(tk->value, "export", 7) == 0 && (tk->next == NULL || ft_strncmp(tk->next->type, "arg", 4) != 0)) // affiche toute les variables d'environnement ajoute
         {
             // calcule la longueur des deux tableaux (env+export_tab)
-            int i = 0, j = 0;
             while (dt->env && dt->env[i])
                 i++;
             while (dt->export_tab && dt->export_tab[j])
@@ -122,7 +131,7 @@ int ft_export(struct token *tk, struct data *dt)
             if (!arg_tab)
                 return (1);
             int k = 0;
-            struct token *current_arg = tk->next; 
+            struct token *current_arg = tk->next;
             while (k < count_arg)
             {
                 arg_tab[k] = ft_strdup(current_arg->value);
@@ -143,7 +152,7 @@ int ft_export(struct token *tk, struct data *dt)
                     while (dt->env && dt->env[env_idx])
                     {
                         // vrif nom + =
-                        if (ft_strncmp(dt->env[env_idx], arg_tab[k], name_len) == 0 
+                        if (ft_strncmp(dt->env[env_idx], arg_tab[k], name_len) == 0
                             && dt->env[env_idx][name_len] == '=')
                         {
                             free(dt->env[env_idx]);

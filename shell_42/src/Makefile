@@ -3,7 +3,8 @@ NAME    = Minishell
 CC      = cc
 CFLAGS  = -Wall -Wextra -Werror -g -I ./libft -I./lexer -I./tokens -I./built-in -I./inc.
 
-SRCS    = main.c lexer/lexer.c lexer/split_mod.c tokens/token.c  signal/signal.c utiles/utiles.c parser/parser.c exec/exec.c exec/heardoc.c
+SRCS    = main.c lexer/lexer.c lexer/split_mod.c tokens/token.c  signal/signal.c utiles/utiles.c parser/parser.c exec/exec.c \
+		  exec/heardoc.c built-in/echo.c built-in/pwd.c built-in/cd.c built-in/export.c built-in/env.c
 OBJS    = $(SRCS:.c=.o)
 
 LIBFT   = libft/libft.a

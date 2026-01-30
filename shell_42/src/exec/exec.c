@@ -44,13 +44,33 @@ char *check_path(char *str, struct data *data) // verifie le chemin de la comman
 	return (NULL);
 }
 
-int	execution(struct commandes *cmd, struct token *tokens)
+int	execution(struct commandes *cmd, struct token *tokens, struct data *data)
 {
+	int i = 0;
 	(void)tokens;
 	if (!cmd->value)
 		return (0);
 	if (strcmp(cmd->value, "echo") == 0)
 	{
+		echo(cmd->argv);
+		return (1);
+	}
+	else if (strcmp(cmd->value, "pwd") == 0)
+	{
+		i = ft_pwd();
+		return (1);
+	}
+	else if (strcmp(cmd->value, "cd") == 0)
+	{
+		return (1);
+	}
+	else if (strcmp(cmd->value, "export") == 0)
+	{
+		return (1);
+	}
+	else if (strcmp(cmd->value, "env") == 0)
+	{
+		i = env(data);
 		return (1);
 	}
 	return (0);
@@ -124,7 +144,7 @@ int	exec(struct token *tokens, struct data *data, struct commandes *cmd)
 				dup2(fd_out, STDOUT_FILENO);
 				close(fd_out);
 			}
-			if (execution(commande, tokens) == 0)
+			if (execution(commande, tokens, data) == 0)
 			{
 				valid_path = check_path(commande->value, data);
 				if (valid_path == NULL)
@@ -142,6 +162,14 @@ int	exec(struct token *tokens, struct data *data, struct commandes *cmd)
 		}
 		else
 		{
+			if (strcmp(cmd->value, "cd") == 0)
+			{
+				ft_cd(cmd->argv, data);
+			}
+			else if (strcmp(cmd->value, "export") == 0)
+			{
+				ft_export(tokens, data);
+			}
 			if (prev != -1) // si on a fini de lire dans le fd on le close
 				close(prev);
 			if (commande->next)
