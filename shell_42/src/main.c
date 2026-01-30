@@ -34,6 +34,7 @@ int main(int ac, char **av, char **env)
     char **arg;
     int i;
     int k;
+    int etr;
     int j;
     int len;
 
@@ -41,6 +42,7 @@ int main(int ac, char **av, char **env)
     data = malloc(sizeof(struct data));
     if (!data)
         return (1);
+    etr = 0;
     k = 0;
     len = 0;
     j = 0;
@@ -60,6 +62,7 @@ int main(int ac, char **av, char **env)
     signal(SIGQUIT, SIG_IGN);
     while (1)
     {
+        etr = 0;
         line = readline("minishell$ ");
         if (!line)
         {
@@ -67,7 +70,9 @@ int main(int ac, char **av, char **env)
             free(data);
             return(1);
         }
-        if (*line)
+        if(line[0] == '\0')
+            etr = 1;
+        if (*line && etr == 0)
             add_history(line);
         k = 0;
         data->result_split = ft_split_mod(line, ' ');
@@ -93,7 +98,7 @@ int main(int ac, char **av, char **env)
             arg[len] = NULL;
 
             i = 0;
-            while (data->result_split[i])
+            while (data->result_split[i] && etr == 0)
             {
                 type = find_type(data->result_split[i], data);
                 if(!type)
@@ -144,14 +149,14 @@ int main(int ac, char **av, char **env)
                     }
                     i = j - 1;
                 }
-                if(type)
+                if(type && etr == 0)
                 {
                     free(type);
                     type = NULL;
                 }
                 i++;
             }
-            while (data->result_split[k])
+            while (data->result_split[k] && etr == 0)
             {
                 tokens = new_token(tokens, data->result_split[k], arg[k]);
                 k++;
@@ -166,8 +171,10 @@ int main(int ac, char **av, char **env)
                 free_tab(arg);
                 arg = NULL;
             }
-            parser(tokens, data);
-            free_loop(data, &tokens, arg);
+            if (etr == 0)
+                parser(tokens, data);
+            if (etr == 0)
+                free_loop(data, &tokens, arg);
         }
         free(line);
     }
@@ -175,8 +182,11 @@ int main(int ac, char **av, char **env)
         free_tab(data->export_tab);
     if(data->path_split)
         free_tab(data->path_split);
-    free_tab(data->env);
-    free(data);
-    free(tokens);
+    if(data->env)
+        free_tab(data->env);
+    if(data)
+        free(data);
+    if(tokens)
+        free(tokens);
     return (0);
 }

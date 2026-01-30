@@ -8,6 +8,7 @@ char **add_to_env_tab_cd(char **old_tab, char *str)
 
     i = 0;
     j = 0;
+
     if (old_tab)
     {
         while (old_tab[i])
@@ -21,12 +22,15 @@ char **add_to_env_tab_cd(char **old_tab, char *str)
         if(ft_strncmp(old_tab[j], "OLDPWD=", 7) == 0)
             new_tab[j] = ft_strdup(str);
         else
-            new_tab[j] = old_tab[j];
+            new_tab[j] = ft_strdup(old_tab[j]);
         j++;
     }
     new_tab[j] = NULL;
-    if (old_tab)
-        free(old_tab);
+    if(old_tab)
+    {
+        free_tab(old_tab);
+        old_tab = NULL;
+    }
     return (new_tab);
 }
 
@@ -41,7 +45,7 @@ void ft_cd(char** args, struct data* data)
     path_cd = NULL;
     if(args[1])
         path_cd = args[1];
-    if(!args[1])
+    if(!args[1] || ft_strcmp(args[1], "~") == 0)
         path_cd = getenv("HOME");
     if(chdir(path_cd) != 0)
     {
@@ -54,7 +58,15 @@ void ft_cd(char** args, struct data* data)
     {
         data->env = add_to_env_tab_cd(data->env, old_pwd);
         if(data->export_tab)
+        {
+            free_tab(data->export_tab);
+            data->export_tab = NULL;
             data->export_tab = add_to_env_tab_cd(data->export_tab, old_pwd);
+        }
     }
+    if(tmp)
+        free(tmp);
+    if(old_pwd)
+        free(old_pwd);
     return;
 }

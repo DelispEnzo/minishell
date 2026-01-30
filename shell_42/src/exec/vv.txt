@@ -9,7 +9,6 @@ char *check_path(char *str, struct data *data) // verifie le chemin de la comman
 	char	*valid_path;
 
 	i = 0;
-	av2 = NULL;
 	path = NULL;
 	while (data->env[i] != NULL)
 	{
@@ -23,12 +22,9 @@ char *check_path(char *str, struct data *data) // verifie le chemin de la comman
 		i++;
 	}
 	if (!path)
-		return (NULL);
+        return (NULL);
 	if(data->path_split)
-	{
 		free_tab (data->path_split);
-		data->path_split = NULL;
-	}
 	data->path_split = ft_split(path, ':');
 	if(!data->path_split)
 	{
@@ -37,10 +33,7 @@ char *check_path(char *str, struct data *data) // verifie le chemin de la comman
 	}
 	free(path);
 	i = 0;
-	if(ft_strncmp(str, "./", 2) != 0)
-		av2 = ft_strjoin("/", str);
-	else
-		return(ft_strdup(str));
+	av2 = ft_strjoin("/", str);
 	valid_path = NULL;
 	while (data->path_split[i])
 	{
