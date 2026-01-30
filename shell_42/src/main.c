@@ -6,16 +6,16 @@ void free_loop(struct data *data, struct token **tokens, char **arg)
 {
     int i;
 
+    i = 0;
     if (data->result_split)
     {
-        for (i = 0; data->result_split[i]; i++)
-            free(data->result_split[i]);
-        free(data->result_split);
+        free_tab(data->result_split);
         data->result_split = NULL;
     }
     if (arg)
     {
-        free(arg);
+        free_tab(arg);
+        arg = NULL;
     }
     if (*tokens)
     {
@@ -57,9 +57,10 @@ int main(int ac, char **av, char **env)
     while (1)
     {
         line = readline("minishell$ ");
-        if (!line) break;
-        if (*line) add_history(line);
-
+        if (!line)
+          break;
+        if (*line)
+            add_history(line);
         k = 0;
         data->result_split = ft_split_mod(line, ' ');
         if (data->result_split)
@@ -99,20 +100,12 @@ int main(int ac, char **av, char **env)
                 k++;
             }
             parser(tokens, data);
-			//////////////////////////////////////////////////////////////////////////////////////////////////////
-			// if (tokens && ft_strcmp(tokens->value, "export") == 0)
-			// {
-			// 	ft_export(tokens, data);
-			// }                                                                   sert a tester les builtin   <-------------------------------------------------------
-			// if (tokens && ft_strcmp(tokens->value, "exit") == 0)
-			// {
-			// 	ft_exit(tokens);
-			// }
-			/////////////////////////////////////////////////////////////////////////////////////////////////////
             free_loop(data, &tokens, arg);
         }
         free(line);
     }
-    free_all(NULL, data, NULL, NULL);
+    free_tab(data->env);
+    free(data);
+    free(tokens);
     return (0);
 }
