@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_mod.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: edelispo <edelispo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 16:59:57 by enzo              #+#    #+#             */
-/*   Updated: 2026/01/21 16:59:58 by enzo             ###   ########.fr       */
+/*   Updated: 2026/01/30 16:08:37 by edelispo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,6 @@ char	**ft_split_mod(char const *s, char c)
 {
 	size_t	words;
 	char	**tab;
-
 	words = count_words(s, c);
 	tab = malloc(sizeof(char *) * (words + 1));
 	if (!tab)

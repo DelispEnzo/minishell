@@ -26,6 +26,11 @@ char *check_path(char *str, struct data *data) // verifie le chemin de la comman
 	if(data->path_split)
 		free_tab (data->path_split);
 	data->path_split = ft_split(path, ':');
+	if(!data->path_split)
+	{
+		free(path);
+		return(NULL);
+	}
 	free(path);
 	i = 0;
 	av2 = ft_strjoin("/", str);
@@ -41,6 +46,7 @@ char *check_path(char *str, struct data *data) // verifie le chemin de la comman
 		i++;
 		free(valid_path);
 	}
+	free(av2);
 	return (NULL);
 }
 
@@ -76,6 +82,21 @@ int	execution(struct commandes *cmd, struct token *tokens, struct data *data)
 	return (0);
 }
 
+void free_machin_truc(struct token *tokens, struct data *data, struct commandes *cmd)
+{
+    if (cmd)
+        free_commande(cmd);
+    if (tokens)
+	{
+        destroy_tokens(tokens);
+	}
+    if (data->path_split)
+        free_tab(data->path_split);
+    if (data->env)
+        free_tab(data->env);
+    if (data)
+        free(data);
+}
 int	exec(struct token *tokens, struct data *data, struct commandes *cmd)
 {
 	struct commandes	*commande;
@@ -86,6 +107,7 @@ int	exec(struct token *tokens, struct data *data, struct commandes *cmd)
 
 	prev = -1;
 	commande = cmd;
+	valid_path = NULL;
 	while (commande)
 	{
 		if (commande->next)
@@ -93,6 +115,7 @@ int	exec(struct token *tokens, struct data *data, struct commandes *cmd)
 			if (pipe(fd) == -1)
 				exit(1);
 		}
+
 		pid = fork();
 		if (pid == 0)
 		{
@@ -108,11 +131,11 @@ int	exec(struct token *tokens, struct data *data, struct commandes *cmd)
 				close(fd[1]);
 			}
 			if (commande->heredoc_mode == 1)
-				{
-					int fd_heredoc = gestion_heredoc(commande->limiter);
-					dup2(fd_heredoc, STDIN_FILENO);
-					close(fd_heredoc);
-				}
+			{
+				int fd_heredoc = gestion_heredoc(commande->limiter);
+				dup2(fd_heredoc, STDIN_FILENO);
+				close(fd_heredoc);
+			}
 			else if (commande->infile != NULL) // <
 			{
 				int fd_in;
@@ -121,6 +144,7 @@ int	exec(struct token *tokens, struct data *data, struct commandes *cmd)
 				if (fd_in == -1)
 				{
 					perror(commande->infile);
+					free_machin_truc(tokens, data, cmd);
 					exit(1);
 				}
 				dup2(fd_in, STDIN_FILENO);
@@ -139,6 +163,7 @@ int	exec(struct token *tokens, struct data *data, struct commandes *cmd)
 				if (fd_out == -1)
 				{
 					perror(commande->outfile);
+					free_machin_truc(tokens, data, cmd);
 					exit(1);
 				}
 				dup2(fd_out, STDOUT_FILENO);
@@ -152,12 +177,17 @@ int	exec(struct token *tokens, struct data *data, struct commandes *cmd)
 					write(2, "minishell: command not found: ", 30);
 					write(2, commande->value, ft_strlen(commande->value));
 					write(2, "\n", 1);
+					free(valid_path);
+					free_machin_truc(tokens, data, cmd);
 					exit(127);
 				}
 				execve(valid_path, commande->argv, data->env);
+				free(valid_path);
 				perror("execve");
+				free_machin_truc(tokens, data, cmd);
 				exit(126);
 			}
+			free_machin_truc(tokens, data, cmd);
 			exit(0);
 		}
 		else

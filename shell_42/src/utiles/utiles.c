@@ -6,7 +6,7 @@
 /*   By: edelispo <edelispo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/26 13:22:04 by elquesne          #+#    #+#             */
-/*   Updated: 2026/01/30 19:31:04 by edelispo         ###   ########.fr       */
+/*   Updated: 2026/01/30 15:35:04 by edelispo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void free_all(char *line, struct data *data, struct token *tokens, char **arg) /
 
 	i = 0;
 	free(line);
+	printf("hi \n\n\n\n\n\n\n\n");
 	if (data->env)
 	{
 		while (data->env[i])

@@ -27,6 +27,7 @@ struct data;
 #include "../lexer/lexer.h"
 #include "../exec/exec.h"
 
-int parser(struct token *token, struct data *data);
+void	free_commande(struct commandes *cmd);
+int		parser(struct token *token, struct data *data);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: edelispo <edelispo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 23:07:12 by enzo              #+#    #+#             */
-/*   Updated: 2026/01/29 00:58:45 by enzo             ###   ########.fr       */
+/*   Updated: 2026/01/30 20:32:03 by edelispo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,12 +140,37 @@ void cpy_commande(struct token *token, struct commandes *cmd)
 	cmd->argv[i] = NULL;
 }
 
-int parser(struct token *token, struct data *data)
+void free_commande(struct commandes *cmd)
+{
+	struct commandes *tmp;
+
+	printf("Rentre dans free_commande\n");
+	tmp = cmd;
+	while(cmd != NULL)
+	{
+		if (cmd->argv)
+			free_tab(cmd->argv);
+		if(cmd->infile)
+			free(cmd->infile);
+		if(cmd->limiter)
+			free(cmd->limiter);
+		if(cmd->outfile)
+			free(cmd->outfile);
+		if(cmd->value)
+			free(cmd->value);
+		tmp = cmd;
+		cmd = cmd->next;
+		free(tmp);
+	}
+}
+int parser(struct token *tokens, struct data *data)
 {
 	struct commandes *commande;
 	struct token *tmp;
+	struct token *token;
 	struct commandes *head;
 
+	token = tokens;
 	head = NULL;
 	commande = ft_calloc(1, sizeof(*commande));
 	if (!commande)
@@ -156,10 +181,10 @@ int parser(struct token *token, struct data *data)
 		commande->argv = malloc(sizeof(char *) * (size_argv(token) + 1));
 		if (!commande->argv)
 			return (0);
+		commande->argv[size_argv(token)] = NULL;
 		tmp = token;
 		token = avance_token(token, size_argv(token));
 		cpy_commande(tmp, commande);
-
 		if (token != NULL && strncmp(token->type, "pipe", 5) == 0)
 		{
 			struct commandes *nouvelle;
@@ -171,6 +196,7 @@ int parser(struct token *token, struct data *data)
 		else
 			break;
 	}
-	exec(token, data, head);
+	exec(tokens, data, head);
+	free_commande(head);
 	return (0);
 }
