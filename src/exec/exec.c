@@ -3,26 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 17:21:45 by enzo              #+#    #+#             */
-/*   Updated: 2026/02/09 17:58:00 by elquesne         ###   ########.fr       */
+/*   Updated: 2026/02/11 13:21:46 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
 
-void	init_enfant_1(t_enfant *enfant, struct data *data, int *fd)
-{
-	int	prev;
-
-	prev = -1;
-	enfant->data = data;
-	enfant->fd = fd;
-	enfant->prev = prev;
-}
-
-void	enfant_process(t_enfant *enfant)
+void	enfant_process(t_enfant *enfant, t_all *all)
 {
 	int		fd_in;
 	int		fd_out;
@@ -30,21 +20,23 @@ void	enfant_process(t_enfant *enfant)
 	char	*valid_path;
 	int		flag;
 
+	if (strcmp(enfant->commande->argv[0], "./minishell") == 0)
+	{
+		signal(SIGINT, 0); // a verifier
+		signal(SIGQUIT, 0);
+	}
 	valid_path = NULL;
 	les_if(enfant, &fd_heredoc);
 	petit_if(enfant, &flag, &fd_out);
 	eh_if(enfant, &fd_in);
-	if (execution(enfant->commande, enfant->data) == 0
-		&& execution_2(enfant->commande, enfant->data) == 0)
-	{
-		exevv(enfant, valid_path);
-		perror("execve");
-		exit(126);
-	}
-	printf("ici\n");
-	free_principal(enfant->princ);
+	no_valid_path(enfant, all, valid_path);
+	if (enfant->princ)
+		free_principal(enfant->princ);
 	free_machin_truc(enfant->tokens, enfant->data, enfant->cmd);
 	free(enfant);
+	DIXDOUZEQUATORZBUREAUX(all);
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, SIG_IGN);
 	exit(0);
 }
 
@@ -61,8 +53,14 @@ void	el(t_enfant *enfant, int *eh, struct commandes *cmd, pid_t *pid)
 	enfant->commande = enfant->commande->next;
 }
 
-void	wh_cmd(t_enfant *enfant, pid_t *pid, int *eh, struct commandes *cmd)
+void	wh_cmd(t_enfant *enfant, t_principal	*princ, struct commandes *cmd,
+		t_all *all)
 {
+	int		*eh;
+	pid_t	*pid;
+
+	eh = &princ->eh;
+	pid = &princ->pid;
 	while (enfant->commande)
 	{
 		if (enfant->commande->next)
@@ -73,33 +71,15 @@ void	wh_cmd(t_enfant *enfant, pid_t *pid, int *eh, struct commandes *cmd)
 		*pid = fork();
 		if (*pid == 0)
 		{
-			enfant_process(enfant);
+			enfant_process(enfant, all);
 		}
 		else
 			el(enfant, eh, cmd, pid);
 	}
-	
 }
 
-int	exec(struct token *tokens, struct data *data, struct commandes *cmd)
+void	wait_enfant_exit(t_principal *princ, t_enfant *enfant)
 {
-	t_enfant	*enfant;
-	t_principal	*princ;
-
-	princ = malloc(sizeof(t_principal));
-	if (!princ)
-		return (0);
-	princ->commande = cmd;
-	enfant = init_enfant_0(princ->commande, tokens, cmd);
-	if (!enfant)
-		return (free(princ), 0);
-	enfant->princ = princ;
-	init_enfant_1(enfant, data, princ->fd);
-	enfant->commande = cmd;
-	wh_cmd(enfant, &princ->pid, &princ->eh, cmd);
-	printf("e4\n");
-	princ->der_pid = wait(&princ->statue);
-	printf("e3\n");
 	while (princ->der_pid > 0)
 	{
 		if (princ->der_pid == princ->eh)
@@ -113,5 +93,31 @@ int	exec(struct token *tokens, struct data *data, struct commandes *cmd)
 	}
 	free_principal(princ);
 	free(enfant);
+}
+
+int	exec(t_all *all, struct commandes *cmd)
+{
+	t_enfant	*enfant;
+	t_principal	*princ;
+
+	if (cmd->value && ft_strcmp(cmd->value, "./minishell"))
+	{
+		signal(SIGINT, NULL);
+	}
+	princ = malloc(sizeof(t_principal));
+	if (!princ)
+		return (0);
+	princ->commande = cmd;
+	enfant = init_enfant_0(princ->commande, all->tokens, cmd);
+	if (!enfant)
+		return (free(princ), 0);
+	enfant->princ = princ;
+	init_enfant_1(enfant, all->data, princ->fd);
+	enfant->commande = cmd;
+	wh_cmd(enfant, princ, cmd, all);
+	princ->der_pid = wait(&princ->statue);
+	wait_enfant_exit(princ, enfant);
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, SIG_IGN);
 	return (0);
 }

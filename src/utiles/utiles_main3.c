@@ -5,6 +5,7 @@ int	init_all(t_all *all, char **env)
 	if (data_init(all) == 0)
 		return (0);
 	all->tokens = NULL;
+	all->pipe_pas_ferme = 0;
 	all->line = NULL;
 	all->arg = NULL;
 	all->value_env = NULL;
@@ -22,6 +23,7 @@ int	init_all(t_all *all, char **env)
 
 int	curcu(t_all *all)
 {
+	all->k = 0;
 	while ((all->line[all->k] == 32 || all->line[all->k] == '\t')
 		&& all->line[all->k])
 	{

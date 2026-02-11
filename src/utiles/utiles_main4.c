@@ -29,13 +29,27 @@ int	ww(t_all *all)
 	return (1);
 }
 
+static int token_has_quote(char *s)
+{
+	int i = 0;
+	while (s[i])
+	{
+		if (s[i] == '\'' || s[i] == '\"')
+		return (1);
+		i++;
+	}
+	return (0);
+}
+
 void	wh(t_all *all)
 {
+	int quoted;
 	while (all->data->result_split[all->k] && all->etr == 0)
 	{
+		quoted = token_has_quote(all->data->result_split[all->k]);
 		all->value_env = chiant(all->data->result_split[all->k], all->data);
 		all->value_env = suppr_quote(all->value_env);
-		all->tokens = new_token(all->tokens, all->value_env, all->arg[all->k]);
+		all->tokens = new_token(all->tokens, all->value_env, all->arg[all->k], quoted);
 		free(all->value_env);
 		all->value_env = NULL;
 		all->k++;
@@ -51,26 +65,57 @@ void	wh(t_all *all)
 		all->arg = NULL;
 	}
 	if (all->etr == 0)
-		parser(all->tokens, all->data);
+		parser(all);
 	if (all->etr == 0)
 		free_loop(all->data, &all->tokens, all->arg);
+}
+
+void free_all_on(t_all *all)
+{
+		if (all->data->env)
+	{
+		free_tab(all->data->env);
+		all->data->env = NULL;
+	}
+	if (all->data)
+	{
+		free(all->data);
+		all->data = NULL;
+	}
+	if (all->tokens)
+	{
+		destroy_tokens(all->tokens);
+		all->tokens = NULL;
+	}
+	if (all->line)
+		free(all->line);
+	if (all->type)
+		free(all->type);
+	if (all->next_type)
+		free(all->next_type);
+	if (all->arg)
+		free_tab(all->arg);
+	free(all);
 }
 
 void	on_va_bien_tout_free(t_all *all)
 {
 	if (all->value_env)
+	{
 		free(all->value_env);
+		all->value_env = NULL;
+	}
 	if (all->data->export_tab)
+	{
 		free_tab(all->data->export_tab);
+		all->data->export_tab = NULL;
+	}
 	if (all->data->path_split)
+	{
 		free_tab(all->data->path_split);
-	if (all->data->env)
-		free_tab(all->data->env);
-	if (all->data)
-		free(all->data);
-	if (all->tokens)
-		destroy_tokens(all->tokens);
-	free(all);
+		all->data->path_split = NULL;
+	}
+	free_all_on(all);
 }
 
 int dbl_pipe(char *str)
@@ -99,8 +144,58 @@ int dbl_pipe(char *str)
 	return (0);
 }
 
+int pipe_close(t_all *all)
+{
+	int i;
+	char *str;
+	char der;
+
+	str = all->line;
+	i = 0;
+	while (str[i])
+	{
+		if ((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z') || (str[i] >= '0' && str[i] <= '9')
+				|| (str[i] == '|'))
+			der = str[i];
+		i++;
+	}
+	if (der == '|')
+		return (0);
+	return (1);
+}
+
+int check_read_result(char *str)
+{
+	int i;
+
+	if (!str)
+		return (0);
+	i = 0;
+	while ((str[i] == ' ' || str[i] == '\t') && str[i])
+		i++;
+	if (str[i] == '\0')
+		return (0);
+	return (1);
+}
+char *pipe_heardoc(t_all *all)
+{
+	char *rea;
+	char *res;
+	char *res2;
+
+	rea = NULL;
+	while (check_read_result(rea) != 1)
+		rea = readline("pipe> ");
+	res = ft_strjoin(all->line, " ");
+	res2 = ft_strjoin(res, rea);
+	free(res);
+	return (res2);
+}
+
 int	psg(t_all *all)
 {
+	if (pipe_close(all) == 0)
+		all->line = pipe_heardoc(all);
 	if (all->line[0] == '\0')
 		all->etr = 1;
 	if (dbl_pipe(all->line) == 1)

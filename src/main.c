@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 13:52:33 by enzo              #+#    #+#             */
-/*   Updated: 2026/02/09 17:01:47 by elquesne         ###   ########.fr       */
+/*   Updated: 2026/02/10 12:07:03 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void free_data(struct data *data)
 		free_tab(data->path_split);
 	if(data->result_split)
 		free(data->result_split);
-	free(data);	
+	free(data);
 }
 
 int	main(int ac, char **av, char **env)
@@ -84,9 +84,11 @@ int	main(int ac, char **av, char **env)
 		all->etr = 0;
 		all->line = readline("minishell$ ");
 		if (!all->line)
-			return (DIXDOUZEQUATORZBUREAUX(all), 1);
+		{
+			return (on_va_bien_tout_free(all)/*, DIXDOUZEQUATORZBUREAUX(all)*/,1);
+		}
 		if (psg(all) == 0)
-			return (DIXDOUZEQUATORZBUREAUX(all), 1);
+			return (on_va_bien_tout_free(all)/*, DIXDOUZEQUATORZBUREAUX(all)*/,1);
 		free(all->line);
 	}
 	on_va_bien_tout_free(all);

@@ -6,7 +6,7 @@
 /*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 18:01:48 by enzo              #+#    #+#             */
-/*   Updated: 2026/02/09 14:29:12 by enzo             ###   ########.fr       */
+/*   Updated: 2026/02/10 00:17:08 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	bon(char *str)
 {
 	if (str[0] == '/')
 		return (1);
-	if (strcmp(str, "./") == 0 || strcmp(str, "../") == 0)
+	if (ft_strcmp(str, "./") == 0 || ft_strcmp(str, "../") == 0)
 		return (1);
 	return (0);
 }

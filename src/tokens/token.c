@@ -29,22 +29,24 @@ struct token	*get_last_token(struct token *tokens)
 	return (element);
 }
 
-struct token	*mall_tok(struct token *next, char *value)
+struct token	*mall_tok(struct token *next, char *value, int quoted)
 {
 	next = malloc(sizeof(struct token));
 	if (!next)
 		return (NULL);
 	next->value = ft_strdup(value);
+	next->quoted = quoted;
 	return (next);
 }
 
-struct token	*new_token(struct token *tokens, char *value, char *type)
+struct token	*new_token(struct token *tokens, char *value, char *type,
+		int quoted)
 {
 	struct token	*next;
 	struct token	*last_element;
 
 	next = NULL;
-	next = mall_tok(next, value);
+	next = mall_tok(next, value, quoted);
 	if (!next || !next->value)
 	{
 		free(next);
@@ -64,7 +66,7 @@ struct token	*new_token(struct token *tokens, char *value, char *type)
 	return (last_element->next = next, tokens);
 }
 
-void	destroy_tokens(struct token *tokens) // ok
+void	destroy_tokens(struct token *tokens)
 {
 	struct token	*current;
 	struct token	*temp;

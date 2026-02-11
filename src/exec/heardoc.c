@@ -6,7 +6,7 @@
 /*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 18:04:21 by enzo              #+#    #+#             */
-/*   Updated: 2026/02/09 14:28:44 by enzo             ###   ########.fr       */
+/*   Updated: 2026/02/10 16:24:20 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <string.h>
 #include <unistd.h>
 
-int	gestion_heredoc(char *delimiteur)
+int	gestion_heredoc(char *delimiteur, int expand, struct data *data)
 {
 	int		fd;
 	char	*ligne;
@@ -31,17 +31,18 @@ int	gestion_heredoc(char *delimiteur)
 		ligne = readline("> ");
 		if (!ligne)
 			break ;
-		if (strcmp(ligne, delimiteur) == 0)
+		if (ft_strcmp(ligne, delimiteur) == 0)
 		{
 			free(ligne);
 			break ;
 		}
+		if (expand == 1)
+			ligne = chiant(ligne, data);
 		write(fd, ligne, strlen(ligne));
 		write(fd, "\n", 1);
 		free(ligne);
 	}
 	close(fd);
 	fd = open(".heredoc_tmp", O_RDONLY);
-	unlink(".heredoc_tmp");
-	return (fd);
+	return (unlink(".heredoc_tmp"), fd);
 }

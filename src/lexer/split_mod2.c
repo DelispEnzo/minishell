@@ -1,29 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.h                                           :+:      :+:    :+:   */
+/*   split_mod2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/23 17:59:49 by enzo              #+#    #+#             */
-/*   Updated: 2026/02/11 13:31:11 by enzo             ###   ########.fr       */
+/*   Created: 2026/02/11 13:26:58 by enzo              #+#    #+#             */
+/*   Updated: 2026/02/11 13:27:08 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SIGNAL_H
-# define SIGNAL_H
+#include "lexer.h"
 
-# include "../lexer/lexer.h"
-# include "../tokens/token.h"
-# include <readline/history.h>
-# include <readline/readline.h>
-# include <signal.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <unistd.h>
-
-extern int	g_status;
-
-void		handle_sigint(int sig);
-
-#endif // SIGNAL_H
+void	count_word_add_quto(char const **s, char *quote, size_t *i)
+{
+	if ((*s[*i] == '\'' || *s[*i] == '\"') && !*quote)
+		*quote = *s[*i];
+}

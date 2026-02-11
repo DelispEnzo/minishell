@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 18:17:30 by enzo              #+#    #+#             */
-/*   Updated: 2026/02/09 14:50:25 by elquesne         ###   ########.fr       */
+/*   Updated: 2026/02/11 13:46:52 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,10 @@
 # include "../tokens/token.h"
 # include "../utiles/utiles.h"
 
-struct	commandes
+struct					commandes
 {
+	int					heredoc_expand;
+	int					heredoc_fd;
 	char				**argv;
 	char				*value;
 
@@ -35,10 +37,12 @@ struct	commandes
 };
 
 void					droite_utils(int fdfd, struct commandes *cmd);
+int				droite(struct commandes *cmd, struct token *tmp,
+							int fdfd);
 int						size_argv(struct token *token);
 struct token			*avance_token(struct token *token, int i);
 int						gauche(struct commandes *cmd, struct token *tmp);
 void					free_commande(struct commandes *cmd);
-int						parser(struct token *token, struct data *data);
+int						parser(t_all *all);
 
 #endif

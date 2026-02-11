@@ -3,19 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   free_principal.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/09 15:10:11 by elquesne          #+#    #+#             */
-/*   Updated: 2026/02/09 17:44:23 by elquesne         ###   ########.fr       */
+/*   Updated: 2026/02/11 13:25:07 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "exec.h"
 
-void free_principal(t_principal *bon)
+void	free_principal(t_principal *bon)
 {
-    if(!bon)
-        return ;
-    free(bon);
+	if (!bon)
+		return ;
+	free(bon);
 }

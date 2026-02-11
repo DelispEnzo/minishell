@@ -34,7 +34,6 @@ int env(struct data *data);
 int echo(char **argv);
 int ft_pwd(void);
 long long int ft_exit(char** argv);
-void ft_cd(char** args, struct data* data);
 int ft_unset(char **argv, struct data *data);
 char* is_inenv(char *str, char** env);
 void replace_env_while(int *y,int i, char** old_env, char* str, char **new_env);

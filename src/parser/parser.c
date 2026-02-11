@@ -3,41 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 23:07:12 by enzo              #+#    #+#             */
-/*   Updated: 2026/02/09 17:17:16 by elquesne         ###   ########.fr       */
+/*   Updated: 2026/02/11 13:29:53 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
 #include "../tokens/token.h"
-
-static int	droite(struct commandes *cmd, struct token *tmp, int fdfd)
-{
-	if (strncmp(tmp->value, ">>", 2) == 0 && tmp->next)
-	{
-		if (cmd->outfile)
-		{
-			fdfd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fdfd != -1)
-				close(fdfd);
-			free(cmd->outfile);
-		}
-		return (cmd->outfile = ft_strdup(tmp->next->value),
-			cmd->append_mode = 1, 1);
-	}
-	else if (strncmp(tmp->value, ">", 1) == 0 && tmp->value[1] == '\0'
-		&& tmp->next)
-	{
-		if (cmd->outfile)
-			droite_utils(fdfd, cmd);
-		return (cmd->outfile = ft_strdup(tmp->next->value),
-			cmd->append_mode = 0, 1);
-	}
-	else
-		return (0);
-}
+#include "parser.h"
 
 void	cpy_commande(struct token *token, struct commandes *cmd)
 {
@@ -70,6 +44,8 @@ void	free_commande(struct commandes *cmd)
 {
 	struct commandes	*tmp;
 
+	if (!cmd)
+		return ;
 	tmp = cmd;
 	while (cmd != NULL)
 	{
@@ -86,6 +62,7 @@ void	free_commande(struct commandes *cmd)
 		tmp = cmd;
 		cmd = cmd->next;
 		free(tmp);
+		tmp = NULL;
 	}
 }
 
@@ -96,24 +73,33 @@ static int	pars_sub(struct commandes **commande, struct token **token)
 	nouvelle = ft_calloc(1, sizeof(struct commandes));
 	if (!nouvelle)
 		return (0);
+	nouvelle->heredoc_fd = -1;
+	nouvelle->heredoc_expand = 1;
 	(*commande)->next = nouvelle;
 	*commande = nouvelle;
 	*token = (*token)->next;
 	return (1);
 }
 
-int	parser(struct token *tokens, struct data *data)
+void	init_heardoc(struct commandes *commande, struct commandes **head)
+{
+	commande->heredoc_fd = -1;
+	commande->heredoc_expand = 1;
+	*head = commande;
+}
+
+int	parser(t_all *all)
 {
 	struct commandes	*commande;
 	struct token		*token;
 	struct token		*tmp;
 	struct commandes	*head;
 
-	token = tokens;
+	token = all->tokens;
 	commande = ft_calloc(1, sizeof(*commande));
 	if (!commande)
 		return (0);
-	head = commande;
+	init_heardoc(commande, &head);
 	while (token != NULL)
 	{
 		commande->argv = malloc(sizeof(char *) * (size_argv(token) + 1));
@@ -128,5 +114,5 @@ int	parser(struct token *tokens, struct data *data)
 		else
 			break ;
 	}
-	return (exec(tokens, data, head), free_commande(head), 0);
+	return (exec(all, head), free_commande(head), 0);
 }

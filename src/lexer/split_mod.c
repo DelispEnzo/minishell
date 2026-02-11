@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_mod.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 16:59:57 by enzo              #+#    #+#             */
-/*   Updated: 2026/02/09 16:02:04 by elquesne         ###   ########.fr       */
+/*   Updated: 2026/02/11 13:26:49 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,8 @@ static size_t	count_words(char const *s, char c)
 		quote = 0;
 		while (s[i])
 		{
-			if ((s[i] == '\'' || s[i] == '\"') && !quote)
-				quote = s[i];
-			else if (quote && s[i] == quote)
+			count_word_add_quto(&s, &quote, &i);
+			if (quote && s[i] == quote)
 				quote = 0;
 			if (s[i] == c && !quote)
 				break ;
@@ -49,7 +48,7 @@ void	m2lt(t_adriano *adriano, char const *s, char c)
 	while (s[adriano->index])
 	{
 		if ((s[adriano->index] == '\'' || s[adriano->index] == '\"')
-				&& !adriano->quote)
+			&& !adriano->quote)
 			adriano->quote = s[adriano->index];
 		else if (s[adriano->index] == adriano->quote)
 			adriano->quote = 0;
@@ -100,6 +99,7 @@ char	**ft_split_mod(char const *s, char c)
 {
 	size_t	words;
 	char	**tab;
+
 	words = count_words(s, c);
 	tab = malloc(sizeof(char *) * (words + 1));
 	if (!tab)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/05 14:11:43 by enzo              #+#    #+#             */
-/*   Updated: 2026/02/09 14:09:23 by elquesne         ###   ########.fr       */
+/*   Updated: 2026/02/10 12:14:14 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct all
 	int				k;
 	int				etr;
 	int				j;
+	int				pipe_pas_ferme;
 	int				len;
 }	t_all;
 

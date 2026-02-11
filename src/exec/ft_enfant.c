@@ -6,19 +6,14 @@
 /*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/05 11:42:46 by enzo              #+#    #+#             */
-/*   Updated: 2026/02/09 14:28:39 by enzo             ###   ########.fr       */
+/*   Updated: 2026/02/11 13:24:36 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
 
-void	les_if(t_enfant *enfant, int *fd_heredoc)
+void	if_enfant(t_enfant *enfant)
 {
-	if (!enfant->commande->value)
-	{
-		free_machin_truc(enfant->tokens, enfant->data, enfant->cmd);
-		exit(0);
-	}
 	if (enfant->prev != -1)
 	{
 		dup2(enfant->prev, STDIN_FILENO);
@@ -30,11 +25,26 @@ void	les_if(t_enfant *enfant, int *fd_heredoc)
 		dup2(enfant->fd[1], STDOUT_FILENO);
 		close(enfant->fd[1]);
 	}
+}
+
+void	les_if(t_enfant *enfant, int *fd_heredoc)
+{
+	if_enfant(enfant);
 	if (enfant->commande->heredoc_mode == 1)
 	{
-		*fd_heredoc = gestion_heredoc(enfant->commande->limiter);
-		dup2(*fd_heredoc, STDIN_FILENO);
-		close(*fd_heredoc);
+		*fd_heredoc = gestion_heredoc(enfant->commande->limiter,
+				enfant->commande->heredoc_expand, enfant->data);
+		if (*fd_heredoc >= 0)
+		{
+			dup2(*fd_heredoc, STDIN_FILENO);
+			close(*fd_heredoc);
+		}
+	}
+	if (!enfant->commande->value)
+	{
+		free_machin_truc(enfant->tokens, enfant->data, enfant->cmd);
+		free(enfant);
+		exit(0);
 	}
 }
 
@@ -67,6 +77,7 @@ void	eh_if(t_enfant *enfant, int *fd_in)
 		{
 			perror(enfant->commande->infile);
 			free_machin_truc(enfant->tokens, enfant->data, enfant->cmd);
+			free(enfant);
 			exit(1);
 		}
 		dup2(*fd_in, STDIN_FILENO);

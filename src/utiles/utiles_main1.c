@@ -11,11 +11,14 @@ void	free_da(t_all *all)
 	if (all->data->env)
 		free_tab(all->data->env);
 	free(all->data);
+	all->data = NULL;
 }
 void	DIXDOUZEQUATORZBUREAUX(t_all *all)
 {
 	if (!all)
-		return ;
+	{
+		return;
+	}
 	if (all->line)
 		free(all->line);
 	if (all->value_env)
@@ -26,10 +29,6 @@ void	DIXDOUZEQUATORZBUREAUX(t_all *all)
 		free(all->next_type);
 	if (all->arg)
 		free_tab(all->arg);
-	if (all->tokens)
-		destroy_tokens(all->tokens);
-	if (all->data)
-		free_da(all);
 	free(all);
 }
 

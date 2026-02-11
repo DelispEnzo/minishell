@@ -6,22 +6,20 @@
 /*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/23 18:00:54 by enzo              #+#    #+#             */
-/*   Updated: 2026/02/09 14:30:32 by enzo             ###   ########.fr       */
+/*   Updated: 2026/02/10 16:08:06 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "signal.h"
 
-int g_status = 0;
+int		g_status = 0;
 
-
-void handle_sigint(int sig)
+void	handle_sigint(int sig)
 {
-    (void)sig;
-    g_status = 130;
-    write(1, "\n", 1);
+	(void)sig;
+	g_status = 130;
+	write(1, "\n", 1);
 	rl_on_new_line();
-    rl_replace_line("", 0);
-    rl_redisplay();
+	// rl_replace_line("", 0);
+	rl_redisplay();
 }
-

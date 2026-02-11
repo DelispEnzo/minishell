@@ -3,35 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   exec2.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elquesne <elquesne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: enzo <enzo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 17:23:27 by enzo              #+#    #+#             */
-/*   Updated: 2026/02/09 17:51:23 by elquesne         ###   ########.fr       */
+/*   Updated: 2026/02/11 13:25:24 by enzo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
 
-void	exevv(t_enfant *enfant, char *valid_path)
+void	exevv(t_enfant *enfant, char *valid_path, t_all *all)
 {
-	int	k;
+	int		k;
+	char	buf;
 
 	k = 0;
-	printf("e1\n");
-	char buf;
 	read(1, &buf, 0);
 	valid_path = check_path(enfant->commande->value, enfant->data);
 	if (valid_path == NULL)
 	{
-		free(valid_path);
-		if (enfant->princ)
-			free_principal(enfant->princ);
+		free_principal(enfant->princ);
 		valid_null(enfant->commande, valid_path);
 		free_machin_truc(enfant->tokens, enfant->data, enfant->cmd);
 		free(enfant);
-		//exit(127);
-		printf("32\n");
-		return;
+		DIXDOUZEQUATORZBUREAUX(all);
+		exit(127);
 	}
 	k = execve(valid_path, enfant->commande->argv, enfant->data->env);
 	if (k < 0)
